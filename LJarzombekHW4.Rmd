@@ -1,0 +1,91 @@
+---
+title: "Hw 4"
+author: "Laura Jarzombek"
+date: "October 23, 2016"
+output: html_document
+---
+
+###R Markdown Document
+
+###Assignment:
+
+##Write bootstrap code to illustrate the central limit theorem in R markdown and push the result to GitHub. Use a normal distribution with two different sample sizes and an exponential distribution with two different sample sizes. Correct code alone is insufficient. Please also comment on the code and explain the results. For help, see the lotsa.medians function in Unit 4. The deliverable is a link to a GitHub repo containing the code.
+
+###Description:
+
+##Two  functions were created to generate two different sample sizes and an exponentional distribution with two different sample sizes. Comments on the code are documented throughout. 
+
+
+##Define two rnorm samples of differing sample sizes (Std1 is small, Std2 is large)
+
+```{r} 
+Std1<-rnorm(10, 0, 4)
+Std1
+Std2<-rnorm(100, 0, 4)
+Std2
+```
+
+
+##Define two rexp samples of differing sample sizes (Example1 is small, Example2 is large)
+```{r}
+Example1 <- rexp(10)  
+Example1
+Example2 <- rexp(100)
+Example2
+```
+
+
+##Define a vector to house the 1000 samples for each
+```{r}
+bootStd1mean <- numeric(1000)
+bootStd2mean <- numeric(1000)
+bootExample1mean <- numeric(1000)
+bootExample2mean <- numeric(1000)
+```
+
+
+##This is our bootstrap loop to define means of 1000 samples of our original dataset.
+##Samples are chosen randomly with replacement
+```{r}
+for (i in 1:1000) {
+bootStd1 <- sample(Std1, size=length(Std1), replace=TRUE)
+bootStd2 <- sample(Std2, size=length(Std2), replace=TRUE)
+
+bootexp1 <- sample(Std1, size=length(Example1), replace=TRUE)
+bootexp2 <- sample(Std2, size=length(Example2), replace=TRUE)
+
+bootStd1mean[i] <- mean(bootStd1)
+bootStd2mean[i] <- mean(bootStd2)
+
+bootExample1mean[i] <- mean(bootexp1)
+bootExample2mean[i] <- mean(bootexp2)
+}
+```
+
+
+##Below you will see Histogram output from results for NORMAL Distribution:
+```{r}
+par(mfrow=c(2,2))
+hist(Std1, main = "Original RNORM Sample Size 10")
+hist(bootStd1mean, main = "BootStrap RNORM Sample Size 10")
+
+hist(Std2, main = "Original RNORM Sample Size 100")
+hist(bootStd2mean, main = "BootStrap RNORM Sample Size 100")
+
+```
+## The original rnorm samples are slightly difficult to determine if the data is normally distributed. As we randomly sample these datasets 1000 times through a bootstrap mechanism, and take the average of these samples you see the distribution is easily identfied as normal.
+
+
+##Below you will see Histogram output from results for EXPONENTIAL Distribution
+```{r}
+par(mfrow=c(2,2))
+hist(Example1, main = "Original rexp Sample Size 10")
+hist(bootExample1mean, main = "BootStrap rexp Sample Size 10")
+
+hist(Example2, main = "Original rexp Sample Size 100")
+hist(bootExample2mean, main = "BootStrap rexp Sample Size 100")
+```
+##The original dataset is skewed, but when randomly samples through a bootstrap mechanisms - the distribution of averages becomes normally distributed.
+
+##OverallConclusion
+##A big number (1,000) of iterations (bootstraps) from a generated sample, created a normal distribution, regardless of the original distribution (normal or exponential) of the sample. This demonstrates the central limit theorem.
